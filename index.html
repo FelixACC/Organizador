@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#f5f5f0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Archivo Personal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #242424;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --accent: #3a86ff;
+            --accent-light: #3a85ff48;
+            --border: #3f3f3f;
+            --border-left: #3a86ff;
+            --shadow: 0 2px 12px rgba(0,0,0,0.2);
+            --shadow-elevated: 0 4px 20px rgba(0,0,0,0.3);
+            --radius: 16px;
+            --radius-sm: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1a1a1a;
+                --bg-secondary: #242424;
+                --bg-tertiary: #2a2a2a;
+                --text-primary: #f0f0f0;
+                --text-secondary: #b0b0b0;
+                --text-tertiary: #808080;
+                --accent: #3a86ff;
+                --accent-light: #3a85ff48;
+                --border: #3f3f3f;
+                --border-left: #3a86ff;
+                --shadow: 0 2px 12px rgba(0,0,0,0.2);
+                --shadow-elevated: 0 4px 20px rgba(0,0,0,0.3);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 24px;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .app-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            padding-left: 0.25rem;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .error-msg.show {
+            opacity: 1;
+        }
+
+        /* Main App Layout */
+        .app-container {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .app-header {
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            pointer-events: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover {
+            background: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-tertiary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1.25rem 1rem;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-tree {
+            padding: 0 0.75rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .nav-item:hover {
+            background: var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .nav-children {
+            margin-left: 1.5rem;
+            border-left: 2px solid var(--border-left);
+            padding-left: 0.5rem;
+            display: none;
+        }
+
+        .nav-children.expanded {
+            display: block;
+        }
+
+        .expand-icon {
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+
+        .expand-icon.rotated {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--bg-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-add:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-add:active {
+            transform: scale(0.98);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: var(--bg-primary);
+        }
+
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .breadcrumb-item {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item:hover {
+            color: var(--accent);
+        }
+
+        .breadcrumb-item.current {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .breadcrumb-separator {
+            opacity: 0.5;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--bg-secondary);
+            padding: 0.25rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .view-btn {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Documents Grid */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .documents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .doc-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-card:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .doc-card.grid-view {
+            text-align: center;
+        }
+
+        .doc-card.list-view {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .doc-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .doc-card.list-view .doc-icon {
+            margin: 0;
+            width: 40px;
+            height: 40px;
+        }
+
+        .doc-icon.pdf { background: #fee2e2; color: #dc2626; }
+        .doc-icon.image { background: #dbeafe; color: #2563eb; }
+        .doc-icon.doc { background: #e0e7ff; color: #4f46e5; }
+        .doc-icon.sheet { background: #dcfce7; color: #16a34a; }
+        .doc-icon.other { background: #f3f4f6; color: #6b7280; }
+
+        .doc-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-meta {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .doc-actions {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .doc-card:hover .doc-actions {
+            opacity: 1;
+        }
+
+        .action-btn-small {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .action-btn-small:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 2px dashed var(--border);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-elevated);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-select,
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            transition: var(--transition);
+        }
+
+        .form-select:focus,
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-primary);
+        }
+
+        .file-drop-zone:hover,
+        .file-drop-zone.drag-over {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .file-drop-zone svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        .file-drop-text {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-drop-hint {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+        }
+
+        .file-preview-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .file-preview-info {
+            flex: 1;
+        }
+
+        .file-preview-name {
+            font-weight: 500;
+            font-size: 0.9375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-preview-size {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 1.25rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--text-primary);
+            color: white;
+            padding: 0.875rem 1.5rem;
+            border-radius: 24px;
+            font-size: 0.9375rem;
+            box-shadow: var(--shadow-elevated);
+            animation: toastSlide 0.3s ease;
+            pointer-events: auto;
+        }
+
+        @keyframes toastSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                z-index: 50;
+                transition: left 0.3s ease;
+                box-shadow: var(--shadow-elevated);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 40;
+                display: none;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .documents-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .mobile-search {
+                display: block;
+                padding: 0 1.25rem 1rem;
+                background: var(--bg-secondary);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .mobile-search input {
+                width: 100%;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-search {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        /* Preview Modal */
+        .preview-modal .modal {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .preview-content {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 60vh;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+        }
+
+        .preview-pdf {
+            width: 100%;
+            height: 60vh;
+            border: none;
+            border-radius: var(--radius-sm);
+        }
+
+        .preview-info {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn-share {
+            flex: 1;
+            padding: 0.875rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-download {
+            flex: 1;
+            padding: 0.875rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="app-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"></path>
+                </svg>
+            </div>
+            <h1>Archivo Personal</h1>
+            <p class="subtitle">Tu espacio privado de documentos</p>
+            
+            <div class="input-group">
+                <label for="accessCode">Código de acceso</label>
+                <input type="password" id="accessCode" placeholder="Introduce tu código" autocomplete="off">
+            </div>
+            
+            <button class="btn-primary" onclick="checkAccess()">Acceder</button>
+            <div class="error-msg" id="loginError">Código incorrecto</div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="mainApp">
+        <header class="app-header">
+            <div class="header-left">
+                <button class="icon-btn menu-toggle" onclick="toggleSidebar()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="header-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <span class="header-title">Archivo Personal</span>
+            </div>
+            
+            <div class="search-box">
+                <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text_search" class="search-input" id="searchInput" placeholder="Buscar documentos..." oninput="searchDocuments()">
+            </div>
+            
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleView()" title="Cambiar vista">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                    </svg>
+                </button>
+                <button class="icon-btn" onclick="logout()" title="Cerrar sesión">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="mobile-search">
+            <div style="position: relative;">
+                <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="left: 1rem;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" class="search-input" id="mobileSearchInput" placeholder="Buscar documentos..." oninput="searchDocuments()" style="padding-left: 2.75rem;">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+            
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="section-title">Categorías</div>
+                </div>
+                
+                <nav class="nav-tree" id="navTree">
+                    <!-- Se genera dinámicamente -->
+                </nav>
+
+                <div class="sidebar-footer">
+                    <button class="btn-add" onclick="openUploadModal()">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Nuevo documento
+                    </button>
+                </div>
+            </aside>
+
+            <main class="content-area" id="contentArea">
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <span class="breadcrumb-item" onclick="navigateTo('root')">Inicio</span>
+                </div>
+
+                <div class="content-header">
+                    <h2 class="content-title" id="currentCategory">Todos los documentos</h2>
+                    <div class="view-toggle">
+                        <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                            </svg>
+                        </button>
+                        <button class="view-btn" id="listViewBtn" onclick="setView('list')">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="documentsContainer" class="documents-grid">
+                    <!-- Documentos se generan aquí -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Subir documento</h3>
+                <button class="modal-close" onclick="closeUploadModal()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <select class="form-select" id="uploadCategory">
+                        <option value="personal">Personal</option>
+                        <option value="medical">Médico</option>
+                        <option value="financial">Financiero</option>
+                        <option value="work">Trabajo</option>
+                        <option value="home">Hogar</option>
+                        <option value="other">Otros</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Subcategoría (opcional)</label>
+                    <input type="text" class="form-input" id="uploadSubcategory" placeholder="Ej: 2024, Seguros, Proyectos...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nombre del documento</label>
+                    <input type="text" class="form-input" id="uploadName" placeholder="Ej: Factura luz enero">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Archivo</label>
+                    <div class="file-drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <div class="file-drop-text">Toca para seleccionar archivo</div>
+                        <div class="file-drop-hint">O arrastra y suelta aquí</div>
+                    </div>
+                    <input type="file" class="file-input" id="fileInput" onchange="handleFileSelect(event)">
+                    <div id="filePreview" style="display: none;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeUploadModal()">Cancelar</button>
+                <button class="btn-primary" onclick="uploadDocument()" style="width: auto; padding: 0.75rem 1.5rem;">Guardar documento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay preview-modal" id="previewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="previewTitle">Vista previa</h3>
+                <button class="modal-close" onclick="closePreviewModal()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-content" id="previewContent">
+                    <!-- Contenido dinámico -->
+                </div>
+                <div class="preview-info">
+                    <div id="previewDetails"></div>
+                    <div class="preview-actions">
+                        <button class="btn-share" onclick="shareCurrentDocument()">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                            </svg>
+                            Compartir
+                        </button>
+                        <button class="btn-download" onclick="downloadCurrentDocument()">Descargar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Configuración
+        const ACCESS_CODE = '2024'; // Cambia esto por tu código personal
+        const DB_NAME = 'PersonalArchiveDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'documents';
+
+        // Estado
+        let db = null;
+        let currentView = 'grid';
+        let currentCategory = 'all';
+        let currentDocument = null;
+        let documents = [];
+
+        // Estructura de categorías
+        const categories = {
+            personal: { name: 'Personal', icon: 'user', subcategories: ['DNI', 'Pasaporte', 'Certificados'] },
+            medical: { name: 'Médico', icon: 'heart', subcategories: ['Informes', 'Recetas', 'Seguros'] },
+            financial: { name: 'Financiero', icon: 'dollar', subcategories: ['Facturas', 'Nóminas', 'Impuestos'] },
+            work: { name: 'Trabajo', icon: 'briefcase', subcategories: ['Contratos', 'Proyectos', 'Formación'] },
+            home: { name: 'Hogar', icon: 'home', subcategories: ['Alquiler', 'Servicios', 'Reparaciones'] },
+            other: { name: 'Otros', icon: 'folder', subcategories: [] }
+        };
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            initDB();
+            setupDragAndDrop();
+            
+            // Check if already logged in (session only)
+            if (sessionStorage.getItem('authenticated')) {
+                showMainApp();
+            }
+        });
+
+        // Base de datos IndexedDB
+        function initDB() {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            
+            request.onerror = () => console.error('Error al abrir la base de datos');
+            
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                loadDocuments();
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const database = event.target.result;
+                if (!database.objectStoreNames.contains(STORE_NAME)) {
+                    const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    store.createIndex('category', 'category', { unique: false });
+                    store.createIndex('subcategory', 'subcategory', { unique: false });
+                    store.createIndex('name', 'name', { unique: false });
+                }
+            };
+        }
+
+        // Autenticación
+        function checkAccess() {
+            const input = document.getElementById('accessCode').value;
+            if (input === ACCESS_CODE) {
+                sessionStorage.setItem('authenticated', 'true');
+                showMainApp();
+            } else {
+                const error = document.getElementById('loginError');
+                error.classList.add('show');
+                setTimeout(() => error.classList.remove('show'), 3000);
+            }
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'flex';
+            renderNavTree();
+            loadDocuments();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('authenticated');
+            location.reload();
+        }
+
+        // Navegación
+        function renderNavTree() {
+            const navTree = document.getElementById('navTree');
+            navTree.innerHTML = '';
+            
+            // Item "Todos"
+            const allItem = createNavItem('all', 'Todos los documentos', 'folder', null, true);
+            navTree.appendChild(allItem);
+            
+            // Categorías
+            Object.entries(categories).forEach(([key, cat]) => {
+                const hasSubcategories = cat.subcategories.length > 0;
+                const item = createNavItem(key, cat.name, cat.icon, null, false, hasSubcategories);
+                navTree.appendChild(item);
+                
+                if (hasSubcategories) {
+                    const children = document.createElement('div');
+                    children.className = 'nav-children';
+                    children.id = `children-${key}`;
+                    
+                    cat.subcategories.forEach(sub => {
+                        const subItem = createNavItem(key, sub, 'corner-down-right', sub);
+                        children.appendChild(subItem);
+                    });
+                    
+                    navTree.appendChild(children);
+                }
+            });
+        }
+
+        function createNavItem(category, name, icon, subcategory = null, isActive = false, hasChildren = false) {
+            const div = document.createElement('div');
+            div.className = `nav-item ${isActive ? 'active' : ''}`;
+            div.onclick = () => navigateTo(category, subcategory, div, hasChildren);
+            
+            const iconSvg = getIconSvg(icon);
+            const expandIcon = hasChildren ? `<svg class="expand-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>` : '';
+            
+            div.innerHTML = `
+                ${iconSvg}
+                <span>${name}</span>
+                ${expandIcon}
+            `;
+            
+            if (subcategory) {
+                div.style.paddingLeft = '1.5rem';
+                div.dataset.subcategory = subcategory;
+            }
+            
+            return div;
+        }
+
+        function getIconSvg(name) {
+            const icons = {
+                folder: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>',
+                user: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>',
+                heart: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>',
+                dollar: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>',
+                briefcase: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>',
+                home: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>',
+                'corner-down-right': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>'
+            };
+            
+            return `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">${icons[name] || icons.folder}</svg>`;
+        }
+
+        function navigateTo(category, subcategory = null, element = null, toggleChildren = false) {
+            if (toggleChildren && element) {
+                const children = document.getElementById(`children-${category}`);
+                const icon = element.querySelector('.expand-icon');
+                if (children) {
+                    children.classList.toggle('expanded');
+                    icon?.classList.toggle('rotated');
+                }
+            }
+            
+            // Actualizar active
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if (element) {
+                element.classList.add('active');
+            } else {
+                // Buscar el elemento correspondiente
+                const items = document.querySelectorAll('.nav-item');
+                items.forEach(item => {
+                    if (subcategory && item.dataset.subcategory === subcategory) {
+                        item.classList.add('active');
+                    } else if (!subcategory && item.onclick.toString().includes(`'${category}'`) && !item.dataset.subcategory) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+            
+            currentCategory = subcategory ? `${category}/${subcategory}` : category;
+            updateBreadcrumbs(category, subcategory);
+            loadDocuments();
+            
+            // Cerrar sidebar en móvil
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+
+        function updateBreadcrumbs(category, subcategory) {
+            const container = document.getElementById('breadcrumbs');
+            const catData = categories[category];
+            
+            let html = `<span class="breadcrumb-item" onclick="navigateTo('all')">Inicio</span>`;
+            
+            if (category !== 'all') {
+                html += `<span class="breadcrumb-separator">/</span>`;
+                html += `<span class="breadcrumb-item ${!subcategory ? 'current' : ''}" onclick="navigateTo('${category}')">${catData?.name || category}</span>`;
+            }
+            
+            if (subcategory) {
+                html += `<span class="breadcrumb-separator">/</span>`;
+                html += `<span class="breadcrumb-item current">${subcategory}</span>`;
+            }
+            
+            container.innerHTML = html;
+            
+            // Actualizar título
+            const title = document.getElementById('currentCategory');
+            if (subcategory) {
+                title.textContent = subcategory;
+            } else if (category !== 'all') {
+                title.textContent = catData?.name || category;
+            } else {
+                title.textContent = 'Todos los documentos';
+            }
+        }
+
+        // Gestión de documentos
+        async function loadDocuments() {
+            if (!db) return;
+            
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+                documents = request.result;
+                filterAndRenderDocuments();
+            };
+        }
+
+        function filterAndRenderDocuments() {
+            const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const mobileSearch = (document.getElementById('mobileSearchInput')?.value || '').toLowerCase();
+            const term = searchTerm || mobileSearch;
+            
+            let filtered = documents;
+            
+            // Filtrar por categoría
+            if (currentCategory !== 'all') {
+                if (currentCategory.includes('/')) {
+                    const [cat, sub] = currentCategory.split('/');
+                    filtered = filtered.filter(d => d.category === cat && d.subcategory === sub);
+                } else {
+                    filtered = filtered.filter(d => d.category === currentCategory);
+                }
+            }
+            
+            // Filtrar por búsqueda
+            if (term) {
+                filtered = filtered.filter(d => 
+                    d.name.toLowerCase().includes(term) ||
+                    d.subcategory?.toLowerCase().includes(term)
+                );
+            }
+            
+            renderDocuments(filtered);
+        }
+
+        function renderDocuments(docs) {
+            const container = document.getElementById('documentsContainer');
+            container.className = currentView === 'grid' ? 'documents-grid' : 'documents-list';
+            
+            if (docs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-icon">📄</div>
+                        <h3>No hay documentos</h3>
+                        <p style="margin-top: 0.5rem;">Toca "Nuevo documento" para agregar uno</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = docs.map(doc => {
+                const iconClass = getFileIconClass(doc.fileType);
+                const iconSymbol = getFileIconSymbol(doc.fileType);
+                const date = new Date(doc.date).toLocaleDateString('es-ES');
+                
+                if (currentView === 'grid') {
+                    return `
+                        <div class="doc-card grid-view" onclick="previewDocument(${doc.id})">
+                            <div class="doc-icon ${iconClass}">${iconSymbol}</div>
+                            <div class="doc-name">${escapeHtml(doc.name)}</div>
+                            <div class="doc-meta">${formatFileSize(doc.fileSize)} • ${date}</div>
+                            <div class="doc-actions" onclick="event.stopPropagation()">
+                                <button class="action-btn-small" onclick="shareDocument(${doc.id})" title="Compartir">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                    </svg>
+                                </button>
+                                <button class="action-btn-small" onclick="deleteDocument(${doc.id})" title="Eliminar" style="color: #e74c3c;">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="doc-card list-view" onclick="previewDocument(${doc.id})">
+                            <div class="doc-icon ${iconClass}">${iconSymbol}</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div class="doc-name">${escapeHtml(doc.name)}</div>
+                                <div class="doc-meta">${categories[doc.category]?.name || doc.category} • ${formatFileSize(doc.fileSize)} • ${date}</div>
+                            </div>
+                            <div class="doc-actions" onclick="event.stopPropagation()">
+                                <button class="action-btn-small" onclick="shareDocument(${doc.id})">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                    </svg>
+                                </button>
+                                <button class="action-btn-small" onclick="deleteDocument(${doc.id})" style="color: #e74c3c;">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function getFileIconClass(mimeType) {
+            if (!mimeType) return 'other';
+            if (mimeType.includes('pdf')) return 'pdf';
+            if (mimeType.includes('image')) return 'image';
+            if (mimeType.includes('word') || mimeType.includes('document')) return 'doc';
+            if (mimeType.includes('excel') || mimeType.includes('sheet')) return 'sheet';
+            return 'other';
+        }
+
+        function getFileIconSymbol(mimeType) {
+            const type = getFileIconClass(mimeType);
+            const symbols = {
+                pdf: '📄',
+                image: '🖼️',
+                doc: '📝',
+                sheet: '📊',
+                other: '📎'
+            };
+            return symbols[type];
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Subida de archivos
+        let selectedFile = null;
+
+        function setupDragAndDrop() {
+            const dropZone = document.getElementById('dropZone');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+            });
+            
+            dropZone.addEventListener('drop', handleDrop, false);
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length) {
+                handleFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(event) {
+            if (event.target.files.length) {
+                handleFile(event.target.files[0]);
+            }
+        }
+
+        function handleFile(file) {
+            selectedFile = file;
+            
+            // Auto-completar nombre si está vacío
+            const nameInput = document.getElementById('uploadName');
+            if (!nameInput.value) {
+                nameInput.value = file.name.replace(/\.[^/.]+$/, "");
+            }
+            
+            // Mostrar preview
+            const preview = document.getElementById('filePreview');
+            preview.style.display = 'flex';
+            preview.innerHTML = `
+                <div class="file-preview-icon">${getFileIconSymbol(file.type)}</div>
+                <div class="file-preview-info">
+                    <div class="file-preview-name">${escapeHtml(file.name)}</div>
+                    <div class="file-preview-size">${formatFileSize(file.size)}</div>
+                </div>
+            `;
+        }
+
+        async function uploadDocument() {
+            if (!selectedFile) {
+                showToast('Selecciona un archivo primero');
+                return;
+            }
+            
+            const name = document.getElementById('uploadName').value || selectedFile.name;
+            const category = document.getElementById('uploadCategory').value;
+            const subcategory = document.getElementById('uploadSubcategory').value || null;
+            
+            try {
+                const arrayBuffer = await selectedFile.arrayBuffer();
+                
+                const doc = {
+                    name: name,
+                    category: category,
+                    subcategory: subcategory,
+                    fileName: selectedFile.name,
+                    fileType: selectedFile.type,
+                    fileSize: selectedFile.size,
+                    fileData: arrayBuffer,
+                    date: new Date().toISOString()
+                };
+                
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                
+                await new Promise((resolve, reject) => {
+                    const request = store.add(doc);
+                    request.onsuccess = resolve;
+                    request.onerror = reject;
+                });
+                
+                showToast('Documento guardado correctamente');
+                closeUploadModal();
+                loadDocuments();
+                
+                // Limpiar
+                selectedFile = null;
+                document.getElementById('uploadForm')?.reset();
+                document.getElementById('filePreview').style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error al guardar:', error);
+                showToast('Error al guardar el documento');
+            }
+        }
+
+        // Preview y compartir
+        async function previewDocument(id) {
+            const doc = documents.find(d => d.id === id);
+            if (!doc) return;
+            
+            currentDocument = doc;
+            
+            document.getElementById('previewTitle').textContent = doc.name;
+            const content = document.getElementById('previewContent');
+            const details = document.getElementById('previewDetails');
+            
+            // Mostrar contenido según tipo
+            if (doc.fileType?.includes('image')) {
+                const blob = new Blob([doc.fileData], { type: doc.fileType });
+                const url = URL.createObjectURL(blob);
+                content.innerHTML = `<img src="${url}" class="preview-image" alt="${doc.name}">`;
+            } else if (doc.fileType?.includes('pdf')) {
+                const blob = new Blob([doc.fileData], { type: doc.fileType });
+                const url = URL.createObjectURL(blob);
+                content.innerHTML = `<iframe src="${url}" class="preview-pdf"></iframe>`;
+            } else {
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 3rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">${getFileIconSymbol(doc.fileType)}</div>
+                        <p>Vista previa no disponible para este tipo de archivo</p>
+                    </div>
+                `;
+            }
+            
+            details.innerHTML = `
+                <div style="display: grid; gap: 0.5rem; font-size: 0.9375rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-tertiary);">Nombre:</span>
+                        <span style="font-weight: 500;">${escapeHtml(doc.name)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-tertiary);">Tipo:</span>
+                        <span>${doc.fileName.split('.').pop().toUpperCase()}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-tertiary);">Tamaño:</span>
+                        <span>${formatFileSize(doc.fileSize)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-tertiary);">Fecha:</span>
+                        <span>${new Date(doc.date).toLocaleDateString('es-ES')}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-tertiary);">Categoría:</span>
+                        <span>${categories[doc.category]?.name || doc.category}</span>
+                    </div>
+                    ${doc.subcategory ? `
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-tertiary);">Subcategoría:</span>
+                        <span>${doc.subcategory}</span>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.getElementById('previewModal').classList.add('show');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.remove('show');
+            currentDocument = null;
+        }
+
+        async function shareDocument(id) {
+            const doc = documents.find(d => d.id === id);
+            if (!doc) return;
+            
+            try {
+                const blob = new Blob([doc.fileData], { type: doc.fileType });
+                const file = new File([blob], doc.fileName, { type: doc.fileType });
+                
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: doc.name,
+                        files: [file]
+                    });
+                } else {
+                    // Fallback: descargar
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = doc.fileName;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('Archivo descargado');
+                }
+            } catch (error) {
+                console.error('Error al compartir:', error);
+                showToast('Error al compartir');
+            }
+        }
+
+        function shareCurrentDocument() {
+            if (currentDocument) {
+                shareDocument(currentDocument.id);
+            }
+        }
+
+        function downloadCurrentDocument() {
+            if (!currentDocument) return;
+            
+            const blob = new Blob([currentDocument.fileData], { type: currentDocument.fileType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentDocument.fileName;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Descargando archivo...');
+        }
+
+        function deleteDocument(id) {
+            if (!confirm('¿Eliminar este documento permanentemente?')) return;
+            
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            
+            store.delete(id).onsuccess = () => {
+                showToast('Documento eliminado');
+                loadDocuments();
+                if (currentDocument?.id === id) {
+                    closePreviewModal();
+                }
+            };
+        }
+
+        // UI Helpers
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('show');
+            // Pre-seleccionar categoría actual
+            if (currentCategory !== 'all') {
+                const cat = currentCategory.split('/')[0];
+                document.getElementById('uploadCategory').value = cat;
+            }
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('show');
+            selectedFile = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('uploadName').value = '';
+            document.getElementById('uploadSubcategory').value = '';
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        function setView(view) {
+            currentView = view;
+            document.getElementById('gridViewBtn').classList.toggle('active', view === 'grid');
+            document.getElementById('listViewBtn').classList.toggle('active', view === 'list');
+            filterAndRenderDocuments();
+        }
+
+        function toggleView() {
+            setView(currentView === 'grid' ? 'list' : 'grid');
+        }
+
+        function searchDocuments() {
+            filterAndRenderDocuments();
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Cerrar modales con Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeUploadModal();
+                closePreviewModal();
+            }
+        });
+    </script>
+</body>
+</html>
